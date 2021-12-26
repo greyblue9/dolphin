@@ -144,7 +144,7 @@ class BranchPattern(Pattern):
     def flat(self, *types):
         if type(self) in types:
             return [self]
-        return sum([child.flat(*types) for child in self.children], [])
+        return sum((child.flat(*types) for child in self.children), [])
 
 
 class Argument(LeafPattern):
@@ -309,7 +309,7 @@ def parse_long(tokens, options):
     if len(similar) > 1:  # might be simply specified ambiguously 2+ times?
         raise tokens.error('%s is not a unique prefix: %s?' %
                            (long, ', '.join(o.long for o in similar)))
-    elif len(similar) < 1:
+    elif not similar:
         argcount = 1 if eq == '=' else 0
         o = Option(None, long, argcount)
         options.append(o)
@@ -321,11 +321,10 @@ def parse_long(tokens, options):
         if o.argcount == 0:
             if value is not None:
                 raise tokens.error('%s must not have an argument' % o.long)
-        else:
-            if value is None:
-                if tokens.current() in [None, '--']:
-                    raise tokens.error('%s requires argument' % o.long)
-                value = tokens.move()
+        elif value is None:
+            if tokens.current() in [None, '--']:
+                raise tokens.error('%s requires argument' % o.long)
+            value = tokens.move()
         if tokens.error is DocoptExit:
             o.value = value if value is not None else True
     return [o]
@@ -343,7 +342,7 @@ def parse_shorts(tokens, options):
         if len(similar) > 1:
             raise tokens.error('%s is specified ambiguously %d times' %
                                (short, len(similar)))
-        elif len(similar) < 1:
+        elif not similar:
             o = Option(short, None, 0)
             options.append(o)
             if tokens.error is DocoptExit:

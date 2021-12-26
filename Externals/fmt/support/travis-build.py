@@ -9,8 +9,7 @@ def rmtree_if_exists(dir):
     try:
         shutil.rmtree(dir)
     except OSError as e:
-        if e.errno == errno.ENOENT:
-            pass
+        pass
 
 def makedirs_if_not_exist(dir):
     try:

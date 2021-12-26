@@ -101,9 +101,9 @@ class GoodCommit(object):
 
     def HasCommit(self):
         """Check if the repository contains the known-good commit."""
-        return 0 == subprocess.call(['git', 'rev-parse', '--verify', '--quiet',
+        return subprocess.call(['git', 'rev-parse', '--verify', '--quiet',
                                      self.commit + "^{commit}"],
-                                    cwd=self.subdir)
+                                    cwd=self.subdir) == 0
 
     def Clone(self):
         distutils.dir_util.mkpath(self.subdir)

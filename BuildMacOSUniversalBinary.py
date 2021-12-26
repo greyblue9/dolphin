@@ -175,18 +175,26 @@ def recursive_merge_binaries(src0, src1, dst):
         if not os.path.exists(newpath1):
             continue
 
-        if os.path.islink(newpath0) and os.path.islink(newpath1):
-            if os.path.relpath(newpath0, src0) == os.path.relpath(newpath1, src1):
-                continue
+        if (
+            os.path.islink(newpath0)
+            and os.path.islink(newpath1)
+            and os.path.relpath(newpath0, src0)
+            == os.path.relpath(newpath1, src1)
+        ):
+            continue
 
         if os.path.isdir(newpath0) and os.path.isdir(newpath1):
             continue
 
         # isfile() can be true for links so check that both are not links
         # before checking if they are both files
-        if (not os.path.islink(newpath0)) and (not os.path.islink(newpath1)):
-            if os.path.isfile(newpath0) and os.path.isfile(newpath1):
-                continue
+        if (
+            (not os.path.islink(newpath0))
+            and (not os.path.islink(newpath1))
+            and os.path.isfile(newpath0)
+            and os.path.isfile(newpath1)
+        ):
+            continue
 
         raise Exception(f"{newpath0} and {newpath1} cannot be " +
                         "merged into a universal binary because they are of " +
@@ -330,9 +338,9 @@ def build(config):
 
     print("Built Universal Binary successfully!")
 
-    # Build and run unit tests for each architecture
-    unit_test_results = {}
     if config["run_unit_tests"]:
+        # Build and run unit tests for each architecture
+        unit_test_results = {}
         for arch in ARCHITECTURES:
             if not os.path.exists(arch):
                 os.mkdir(arch)
@@ -345,8 +353,7 @@ def build(config):
                                  "--parallel", f"{threads}"], cwd=arch)
 
         passed_unit_tests = True
-        for a in unit_test_results:
-            code = unit_test_results[a]
+        for a, code in unit_test_results.items():
             passed = code == 0
 
             status_string = "PASSED"

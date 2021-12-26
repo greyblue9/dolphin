@@ -223,9 +223,9 @@ def release(args):
     import rst2md
     changes, version = rst2md.convert(changelog_path)
     cmakelists = 'CMakeLists.txt'
+    prefix = 'set(FMT_VERSION '
     for line in fileinput.input(os.path.join(fmt_repo.dir, cmakelists),
                                 inplace=True):
-        prefix = 'set(FMT_VERSION '
         if line.startswith(prefix):
             line = prefix + version + ')\n'
         sys.stdout.write(line)

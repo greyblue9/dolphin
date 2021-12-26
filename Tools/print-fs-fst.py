@@ -11,10 +11,7 @@ def read_entry(f) -> dict:
     x3 = struct.unpack_from(">I", f.read(4))[0]
     num_children = struct.unpack_from(">I", f.read(4))[0]
 
-    children = []
-    for i in range(num_children):
-        children.append(read_entry(f))
-
+    children = [read_entry(f) for _ in range(num_children)]
     return {
         "name": name,
         "uid": uid,
