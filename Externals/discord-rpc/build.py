@@ -278,7 +278,18 @@ def libs(clean, static, shared, skip_formatter, just_release):
         static_options['WARNINGS_AS_ERRORS'] = True
         dynamic_options['WARNINGS_AS_ERRORS'] = True
 
-    if PLATFORM == 'win':
+    if PLATFORM == 'linux':
+        if static:
+            build_lib('linux-static', None, static_options, just_release)
+        if shared:
+            build_lib('linux-dynamic', None, dynamic_options, just_release)
+
+    elif PLATFORM == 'osx':
+        if static:
+            build_lib('osx-static', None, static_options, just_release)
+        if shared:
+            build_lib('osx-dynamic', None, dynamic_options, just_release)
+    elif PLATFORM == 'win':
         generator32 = 'Visual Studio 14 2015'
         generator64 = 'Visual Studio 14 2015 Win64'
         if static:
@@ -287,16 +298,6 @@ def libs(clean, static, shared, skip_formatter, just_release):
         if shared:
             build_lib('win32-dynamic', generator32, dynamic_options, just_release)
             build_lib('win64-dynamic', generator64, dynamic_options, just_release)
-    elif PLATFORM == 'osx':
-        if static:
-            build_lib('osx-static', None, static_options, just_release)
-        if shared:
-            build_lib('osx-dynamic', None, dynamic_options, just_release)
-    elif PLATFORM == 'linux':
-        if static:
-            build_lib('linux-static', None, static_options, just_release)
-        if shared:
-            build_lib('linux-dynamic', None, dynamic_options, just_release)
 
 
 if __name__ == '__main__':

@@ -26,9 +26,8 @@ def exclude_if_blocks(lines):
 def filter_includes(lines):
     '''Removes lines that are not #include and keeps only the file part.'''
     for l in lines:
-        if l.startswith('#include'):
-            if 'NOLINT' not in l:
-                yield l.split(' ')[1]
+        if l.startswith('#include') and 'NOLINT' not in l:
+            yield l.split(' ')[1]
 
 class IncludeFileSorter(object):
     def __init__(self, path):
@@ -47,7 +46,7 @@ class IncludeFileSorter(object):
         '''
         a, b = self.path, other.path
         if a[0] != b[0]:
-            return False if a[0] == '"' else True
+            return a[0] != '"'
         a, b = a[1:-1].lower(), b[1:-1].lower()
         while '/' in a and '/' in b:
             ca, a = a.split('/', 1)
